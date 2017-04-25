@@ -10,13 +10,12 @@ const sass = require('node-sass');
 const COMPILED_DIR = '.compiled';
 const ABS_COMPILED_DIR = path.resolve(process.cwd(), COMPILED_DIR);
 const OUT_DIR = path.resolve(process.cwd(), 'out');
-const ABS_ELECTRON_SRC = path.resolve(process.cwd(), 'tools/electron/');
 
 const flags = process.argv.slice(2);
 
 clearDir(OUT_DIR)
 .then(runBabel)
-// .then(compileSass)
+.then(compileSass)
 .then(() => {
     return flags.includes('--make') ? efMake() : efPackage();
 })
@@ -42,16 +41,16 @@ function runBabel() {
     });
 }
 
-// function compileSass() {
-//     return new Promise((resolve, reject) => {
-//         sass.render({ file: path.resolve(ABS_COMPILED_DIR, 'styles/main.scss') }, (err, result) => {
-//             if(err) reject(err);
+function compileSass() {
+    return new Promise((resolve, reject) => {
+        sass.render({ file: path.resolve(ABS_COMPILED_DIR, 'styles/main.scss') }, (err, result) => {
+            if(err) reject(err);
 
-//             fs.writeFile(path.resolve(ABS_ELECTRON_SRC, 'style.css'), result.css, (err) => {
-//                 if(err) reject(err);
+            fs.writeFile(path.resolve(ABS_COMPILED_DIR, 'style.css'), result.css, (err) => {
+                if(err) reject(err);
 
-//                 resolve();
-//             });
-//         });
-//     });
-// }
+                resolve();
+            });
+        });
+    });
+}
